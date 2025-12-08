@@ -4,8 +4,7 @@ A **Neuro-Symbolic** multi-agent system that autonomously negotiates travel itin
 
 Unlike standard chatbots, this project uses a "Hybrid" approach: it combines the creative reasoning of **LLMs** with the mathematical reliability of **Python Code** to create a system that is fast, cost-effective, and hallucination-resistant.
 
-![Demo Screenshot](https://via.placeholder.com/800x400?text=Add+Your+Streamlit+Screenshot+Here)
-*(Replace this link with a screenshot of your Streamlit UI)*
+Try the app here: https://prince-travel-agent.streamlit.app/
 
 ---
 
