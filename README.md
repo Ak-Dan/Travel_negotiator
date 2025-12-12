@@ -1,4 +1,4 @@
-# 🌍 AI Travel Negotiator (Neuro-Symbolic System)
+# AI Travel Negotiator (Neuro-Symbolic System)
 
 A **Neuro-Symbolic** multi-agent system that autonomously negotiates travel itineraries under strict constraints. Built with **LangGraph**, **Streamlit**, **Groq (Llama 3)**, and **Tavily**.
 
@@ -8,19 +8,19 @@ Try the app here: https://prince-travel-agent.streamlit.app/
 
 ---
 
-## ✨ Key Features
+## Key Features
 
-* **🧠 Neuro-Symbolic Architecture**
+* ** Neuro-Symbolic Architecture**
     * **Scout (LLM):** Uses Llama 3 to "read" live search results and creatively adjust strategy (Luxury vs. Budget).
     * **Budget & Planner (Code):** Uses pure Python for objective tasks (Math & Logic), ensuring 0% error rate on costs.
-* **🌐 Live Web Search**
+* ** Live Web Search**
     * Integrated with **Tavily API** to fetch real-time hotel prices and availability from the web.
     * Includes **Robust Regex Parsing** to extract clean JSON data from messy web text.
-* **🚨 Human-in-the-Loop**
+* ** Human-in-the-Loop**
     * Detects "Deadlocks" (when agents cannot agree after N retries).
     * Pauses execution and requests a **Human Decision** via the UI.
     * Agents respect the "Force Approve" override and bypass subsequent checks.
-* **🖥️ Professional UI**
+* ** Professional UI**
     * Built with **Streamlit**.
     * Features **Real-time Streaming** of agent thoughts.
     * Universal Design (Compatible with both Light and Dark modes).
@@ -28,9 +28,9 @@ Try the app here: https://prince-travel-agent.streamlit.app/
 
 ---
 
-## 🏗️ Architecture
+##  Architecture
 
-The system operates as a **State Graph** where agents pass a shared memory object (`AgentState`) between them.
+The system operates as a **State Graph**, in which agents pass a shared memory object (`AgentState`) to one another.
 
 ```mermaid
 flowchart TD
@@ -93,7 +93,7 @@ flowchart TD
 
 -----
 
-## 🚀 Usage
+##  Usage
 
 Run the Streamlit application:
 
@@ -105,11 +105,11 @@ streamlit run frontend.py
 
 1.  **Enter Trip Details:** Destination (e.g., "Paris"), Budget (e.g., "$2000"), and Duration.
 2.  **Watch the Debate:** The agents will search live data and debate the cost/location.
-3.  **Intervene:** If the constraints are too tight (e.g., "$100 budget for Paris"), the agents will get stuck. A **"Conflict Detected"** box will appear, allowing you to **Force Approve** the trip or **Stop** the negotiation.
+3.  **Intervene:** If the constraints are too tight (e.g., "$100 budget for Paris"), the agents will get stuck. A "Conflict Detected" box will appear, allowing you to Force Approve the trip or Stop the negotiation.
 
 -----
 
-## 📂 Project Structure
+##  Project Structure
 
 ```text
 ├── frontend.py         # Main Streamlit UI Application
@@ -126,18 +126,18 @@ streamlit run frontend.py
 
 -----
 
-## 💡 Engineering Decisions
+##  Engineering Decisions
 
   * **Why Hybrid?**
     Using an LLM for simple math (Budget Check) is slow and prone to hallucination. By moving the Budget and Planner logic to **Pure Python**, we reduced latency by **40%** and guaranteed mathematical accuracy.
   * **Passthrough Logic:**
-    The agents are programmed with a "Human Override" check at the start of their execution. If `human_decision="approve"` is detected, they bypass their usual strict checks to honor the user's authority.
+    The agents are programmed with a "Human Override" check at the start of their execution. If `human_decision="approve"` is detected, they bypass their usual strict checks to honour the user's authority.
   * **Regex Extraction:**
-    To handle messy web data, the Scout uses a robust Regex pattern (`r"\{.*?\}"`) to hunt for JSON objects within the LLM's response, preventing parsing errors.
+    To handle messy web data, the Scout uses a robust regular expression (`r"\{.*?\}"`) to search for JSON objects in the LLM's response, preventing parsing errors.
 
 -----
 
-## 📜 License
+##  License
 
 This project is licensed under the **MIT License**.
 
