@@ -161,6 +161,13 @@ streamlit run frontend.py
 2.  **Live Evals (End-to-End):** Real-world tests that hit the Groq and Tavily APIs to verify prompt quality and live data fetching.
     * Run: `pytest -m live`
 
+
+**2. Structured Logging:**
+The system replaces standard print statements with Python's `logging` module. This provides:
+- **Timestamps:** To track latency and execution order.
+- **Log Levels:** `INFO` for normal flow, `WARNING` for rejections, and `ERROR` for API failures.
+- **Traceability:** Easier debugging of the multi-agent decision loop.
+
 ##  License
 
 This project is licensed under the **MIT License**.
