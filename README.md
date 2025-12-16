@@ -15,17 +15,17 @@ Try the app here: https://prince-travel-agent.streamlit.app/
 
 ##  Key Features
 
-* **🧠 Neuro-Symbolic Architecture**
+* ** Neuro-Symbolic Architecture**
     * **Scout (LLM):** Uses Llama 3 to "read" live search results and creatively adjust strategy (Luxury vs. Budget).
     * **Budget & Planner (Code):** Uses pure Python for objective tasks (Math & Logic), ensuring 0% error rate on costs.
-* **🌐 Live Web Search**
+* ** Live Web Search**
     * Integrated with **Tavily API** to fetch real-time hotel prices and availability from the web.
     * Includes **Robust Regex Parsing** to extract clean JSON data from messy web text.
-* **🚨 Human-in-the-Loop**
+* ** Human-in-the-Loop**
     * Detects "Deadlocks" (when agents cannot agree after N retries).
     * Pauses execution and requests a **Human Decision** via the UI.
     * Agents respect the "Force Approve" override and bypass subsequent checks.
-* **🖥️ Professional UI**
+* ** Professional UI**
     * Built with **Streamlit**.
     * Features **Real-time Streaming** of agent thoughts.
     * Universal Design (Compatible with both Light and Dark modes).
@@ -33,7 +33,7 @@ Try the app here: https://prince-travel-agent.streamlit.app/
 
 ---
 
-## 🏗️ Architecture
+## Architecture
 
 The system operates as a **State Graph**, in which agents pass a shared memory object (`AgentState`) to one another.
 
@@ -111,7 +111,7 @@ The architecture is built on **LangGraph**, which utilizes a persistent state sc
 
 -----
 
-## 🚀 Usage
+##  Usage
 
 Run the Streamlit application:
 
@@ -144,7 +144,7 @@ streamlit run frontend.py
 
 -----
 
-## 💡 Engineering Decisions
+##  Engineering Decisions
 
   * **Why Hybrid?**
     Using an LLM for simple math (Budget Check) is slow and prone to hallucination. By moving the Budget and Planner logic to **Pure Python**, we reduced latency by **40%** and guaranteed mathematical accuracy.
@@ -155,7 +155,7 @@ streamlit run frontend.py
 
 -----
 
-## 📜 License
+##  License
 
 This project is licensed under the **MIT License**.
 

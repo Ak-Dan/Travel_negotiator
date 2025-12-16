@@ -26,11 +26,11 @@ def test_live_paris_trip():
     # Run the real graph
     final_state = app.invoke(initial_state)
 
-    # 1. Check Success Status
+    #  Check Success Status
     assert final_state["plan_status"] == "APPROVED", \
         f"Expected APPROVED, got {final_state['plan_status']}"
     
-    # 2. Check Data Integrity
+    #  Check Data Integrity
     proposal = final_state["current_proposal"]
     assert proposal is not None
     assert isinstance(proposal["price"], int) or isinstance(proposal["price"], float)
