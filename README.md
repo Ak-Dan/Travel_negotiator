@@ -155,6 +155,12 @@ streamlit run frontend.py
 
 -----
 
+###  Testing Strategy
+1.  **Unit & Integration (Mocked):** Fast, free tests that verify the graph logic and routing using `unittest.mock`.
+    * Run: `pytest -m "not live"`
+2.  **Live Evals (End-to-End):** Real-world tests that hit the Groq and Tavily APIs to verify prompt quality and live data fetching.
+    * Run: `pytest -m live`
+
 ##  License
 
 This project is licensed under the **MIT License**.
