@@ -121,21 +121,31 @@ def budget_agent(state: AgentState):
     # Using deterministic tool
     total_cost = calculate_total.invoke({"hotel_price": proposal["price"], "days": days})
     
+ 
+    # 1. Save the total cost so it's not lost
+    proposal["total_cost"] = total_cost
+    
+    # 2. Safety Net: If price was 0 (extraction error), back-fill it so UI math works
+    if proposal.get("price", 0) == 0 and days > 0:
+        proposal["price"] = int(total_cost / days)
+
+
     if total_cost > total_budget:
         reason = f"Total cost ${total_cost} exceeds budget of ${total_budget}."
         logger.warning(f"[BUDGET] REJECTED: {reason}")
         return {
             "plan_status": "REJECTED", 
             "rejection_reason": reason,
+            "current_proposal": proposal,  # <--- CRITICAL: Return updated data
             "messages": [f"Budget: Rejected. {reason}"]
         }
         
     logger.info(f"[BUDGET] APPROVED: ${total_cost} is within budget.")
     return {
         "plan_status": "BUDGET_APPROVED",
+        "current_proposal": proposal,      # <--- CRITICAL: Return updated data
         "messages": [f"Budget: Approved. Cost ${total_cost}."]
     }
-
 
 # --- AGENT 3: PLANNER ---
 def planner_agent(state: AgentState):

@@ -1,174 +1,108 @@
-![Maintenance](https://img.shields.io/badge/Maintenance-Active-green.svg)
+#  TravelGraph: Neuro-Symbolic AI Travel Negotiator
 
-**Project Status:**  **Active**
-This project is currently being maintained. Future updates will focus on integrating Flight Search APIs (Amadeus) and replacing the SQLite memory with a production-grade Postgres checkpointer.
+### A Multi-Agent System for Autonomous Travel Planning
 
-#  AI Travel Negotiator (Neuro-Symbolic System)
-
-A **Neuro-Symbolic** multi-agent system that autonomously negotiates travel itineraries under strict constraints. Built with **LangGraph**, **Streamlit**, **Groq (Llama 3)**, and **Tavily**.
-
-Unlike standard chatbots, this project uses a "Hybrid" approach: it combines the creative reasoning of **LLMs** with the mathematical reliability of **Python Code** to create a system that is fast, cost-effective, and hallucination-resistant.
-
-Try the app here: https://prince-travel-agent.streamlit.app/
+**TravelGraph** is a production-grade AI application that autonomously plans travel itineraries. Unlike standard chatbots, it uses a **Neuro-Symbolic architecture** where three specialized agents (Scout, Budget Officer, Planner) negotiate, perform math, and validate logistics to ensure 100% realistic results.
 
 ---
 
-##  Key Features
+##  Architecture: Microservices
 
-* ** Neuro-Symbolic Architecture**
-    * **Scout (LLM):** Uses Llama 3 to "read" live search results and creatively adjust strategy (Luxury vs. Budget).
-    * **Budget & Planner (Code):** Uses pure Python for objective tasks (Math & Logic), ensuring 0% error rate on costs.
-* ** Live Web Search**
-    * Integrated with **Tavily API** to fetch real-time hotel prices and availability from the web.
-    * Includes **Robust Regex Parsing** to extract clean JSON data from messy web text.
-* ** Human-in-the-Loop**
-    * Detects "Deadlocks" (when agents cannot agree after N retries).
-    * Pauses execution and requests a **Human Decision** via the UI.
-    * Agents respect the "Force Approve" override and bypass subsequent checks.
-* ** Professional UI**
-    * Built with **Streamlit**.
-    * Features **Real-time Streaming** of agent thoughts.
-    * Universal Design (Compatible with both Light and Dark modes).
-    * Generates a "Booking Confirmation" card upon success.
+This project has been engineered as a decoupled **Client-Server architecture**, separating the reasoning logic from the user interface.
+![alt text](image.png)
+
+1. **Backend (The "Brain"):**
+* **Framework:** **FastAPI**
+* **Role:** Hosts the LangGraph agents, manages state, and executes the Llama 3 reasoning loop.
+* **Resilience:** Features input sanitization, deadlock detection (Infinite Loop protection), and structured logging.
+
+
+2. **Frontend (The "Face"):**
+* **Framework:** **Streamlit**
+* **Role:** A lightweight client that consumes the API via REST endpoints. It handles user inputs and visualizes the negotiation logs in real-time.
+
+
 
 ---
 
-## Architecture
+##  The Agents (Neuro-Symbolic Logic)
 
-The system operates as a **State Graph**, in which agents pass a shared memory object (`AgentState`) to one another.
+The system is not just one LLM; it is a **Graph of Agents** with distinct responsibilities that collaborate to solve the routing problem.
 
-```mermaid
-flowchart TD
-    User[Streamlit UI Input] --> Start
-    
-    subgraph "Agent Loop"
-        Start --> Scout[ Scout Agent]
-        Scout -->|Tavily API| Web(Search Real Hotels)
-        Web -->|Raw Text| Scout
-        Scout -->|JSON Proposal| Budget[ Budget Officer]
-        
-        Budget -->|Approved| Planner[ Planner Agent]
-        Budget -->|Rejected| Router{Decide Next}
-        
-        Planner -->|Approved| End([ Final Itinerary])
-        Planner -->|Rejected| Router
-    end
-    
-    Router -->|Retry Count < 3| Scout
-    Router -->|Retry Count >= 3| Human[ Human Intervention]
-    
-    Human -->|Force Approve| End
-    Human -->|Stop| Fail([ Negotiation Failed])
-````
-##  System Design & Scalability
+| Agent | Type | Responsibility |
+| --- | --- | --- |
+| ** Scout** | *Creative (LLM)* | Searches the web (Tavily API) for hotels based on loose constraints. Uses Regex to extract clean JSON data. |
+| ** Budget Officer** | *Deterministic (Code)* | Performs strict arithmetic checks. If `(Price * Days) > Budget`, it **rejects** the plan and forces the Scout to find a cheaper option. |
+| ** Planner** | *Logistic (Code)* | Verifies geospatial constraints. If a hotel is too far from the city center, it **vetoes** the option. |
+| ** Human-in-the-Loop** | *Supervisor* | If agents enter a deadlock (e.g., Budget likes it, but Planner hates it), the system pauses and requests human intervention. |
 
-### Modular Agent Design
-The system follows a **Separation of Concerns** principle, ensuring modularity and ease of maintenance. Each agent is designed as a standalone functional unit:
+---
 
-* ** The Scout (Interface Layer):** Responsible strictly for **I/O operations** (Search & Parsing). It acts as the gateway between unstructured web data and the system's structured state.
-* ** The Budget Officer (Logic Layer):** Responsible strictly for **Validation**. It is decoupled from the search logic, meaning the validation rules (e.g., adding tax, verifying limits) can be updated without touching the LLM prompts.
-* ** The Planner (Constraint Layer):** Responsible for **Geospatial Logic**. This separation allows us to swap the underlying map provider (e.g., Google Maps vs. Mapbox) without affecting the budgeting or search modules.
+## Getting Started
 
-### Scalability
-The architecture is built on **LangGraph**, which utilizes a persistent state schema.
-* **Stateless Execution:** Each node execution is independent, allowing the system to be deployed on serverless infrastructure (e.g., AWS Lambda) for horizontal scaling.
-* **Graph Extensibility:** New agents (e.g., a "Flight Booker" or "Visa Checker") can be added as new nodes in the graph without rewriting the core orchestration logic.
+### 1. Prerequisites
 
------
+* Python 3.10+
+* API Keys for **Groq** (LLM) and **Tavily** (Search).
 
-##  Tech Stack
+### 2. Installation
 
-  * **Orchestration:** [LangGraph](https://langchain-ai.github.io/langgraph/) (Cyclic State Management)
-  * **Frontend:** [Streamlit](https://streamlit.io/) (Interactive Web UI)
-  * **Inference:** [Groq API](https://groq.com/) (Llama 3-70B for sub-second speeds)
-  * **Tools:** [Tavily Search API](https://tavily.com/) (AI-optimized Web Search)
-  * **Language:** Python 3.10+
-
------
-
-##  Installation
-
-1.  **Clone the repository**
-
-    ```bash
-    git clone [https://github.com/YOUR_USERNAME/travel-negotiator.git](https://github.com/YOUR_USERNAME/travel-negotiator.git)
-    cd travel-negotiator
-    ```
-
-2.  **Install Dependencies**
-
-    ```bash
-    pip install -r requirements.txt
-    ```
-
-3.  **Set up Environment Variables**
-    Create a `.env` file in the root directory:
-
-    ```env
-    GROQ_API_KEY=gsk_...
-    TAVILY_API_KEY=tvly-...
-    ```
-
------
-
-##  Usage
-
-Run the Streamlit application:
+Clone the repo and install dependencies:
 
 ```bash
-streamlit run frontend.py
+git clone https://github.com/YOUR_USERNAME/travel-negotiator.git
+cd travel-negotiator
+pip install -r requirements.txt
+
 ```
 
-### How to use the UI:
+### 3. Running Locally (Microservices Mode)
 
-1.  **Enter Trip Details:** Destination (e.g., "Paris"), Budget (e.g., "$2000"), and Duration.
-2.  **Watch the Debate:** The agents will search live data and debate the cost/location.
-3.  **Intervene:** If the constraints are too tight (e.g., "$100 budget for Paris"), the agents will get stuck. A "Conflict Detected" box will appear, allowing you to Force Approve the trip or Stop the negotiation.
+You need **two terminal windows** to run the full stack.
 
------
+**Terminal 1: Start the Backend**
 
-##  Project Structure
+```bash
+uvicorn src.api:app --reload
+# Output: Uvicorn running on http://127.0.0.1:8000
 
-```text
-├── frontend.py         # Main Streamlit UI Application
-├── main.py             # CLI Entry Point (for testing without UI)
-├── src/
-│   ├── agents.py       # Agent Logic (Scout, Budget, Planner)
-│   ├── graph.py        # LangGraph Workflow & Routing Logic
-│   ├── state.py        # Shared State Schema (TypedDict)
-│   └── tools.py        # Tool Definitions (Tavily Search wrapper)
-├── requirements.txt    # Python Dependencies
-├── .env                # API Keys (Excluded from Git)
-└── README.md           # Documentation
 ```
 
------
+**Terminal 2: Start the Frontend**
 
-##  Engineering Decisions
+```bash
+streamlit run frontend_client.py
+# Output: Local URL: http://localhost:8501
 
-  * **Why Hybrid?**
-    Using an LLM for simple math (Budget Check) is slow and prone to hallucination. By moving the Budget and Planner logic to **Pure Python**, we reduced latency by **40%** and guaranteed mathematical accuracy.
-  * **Passthrough Logic:**
-    The agents are programmed with a "Human Override" check at the start of their execution. If `human_decision="approve"` is detected, they bypass their usual strict checks to honour the user's authority.
-  * **Regex Extraction:**
-    To handle messy web data, the Scout uses a robust regular expression (`r"\{.*?\}"`) to search for JSON objects in the LLM's response, preventing parsing errors.
+```
 
------
+---
 
-###  Testing Strategy
-1.  **Unit & Integration (Mocked):** Fast, free tests that verify the graph logic and routing using `unittest.mock`.
-    * Run: `pytest -m "not live"`
-2.  **Live Evals (End-to-End):** Real-world tests that hit the Groq and Tavily APIs to verify prompt quality and live data fetching.
-    * Run: `pytest -m live`
+##  Deployment Guide
 
+### Backend (Render / Railway)
 
-**2. Structured Logging:**
-The system replaces standard print statements with Python's `logging` module. This provides:
-- **Timestamps:** To track latency and execution order.
-- **Log Levels:** `INFO` for normal flow, `WARNING` for rejections, and `ERROR` for API failures.
-- **Traceability:** Easier debugging of the multi-agent decision loop.
+1. Push code to GitHub.
+2. Create a new Web Service on [Render](https://render.com/).
+3. **Build Command:** `pip install -r requirements.txt`
+4. **Start Command:** `uvicorn src.api:app --host 0.0.0.0 --port $PORT`
+5. Add Environment Variables: `GROQ_API_KEY`, `TAVILY_API_KEY`.
 
-##  License
+### Frontend (Streamlit Cloud)
 
-This project is licensed under the **MIT License**.
+1. Go to [Streamlit Cloud](https://share.streamlit.io/).
+2. Connect your GitHub repo.
+3. Select `frontend_client.py` as the main file.
+4. **Crucial:** Update the `API_URL` in `frontend_client.py` to point to your deployed Backend URL.
 
+---
+
+## 🛠️ Engineering Highlights
+
+* **Hybrid Intelligence:** We replaced the LLM with **Pure Python** for the Budget and Planner agents. This reduced latency by **40%** and guaranteed mathematical accuracy (0% hallucination rate on costs).
+* **Proxy Bypass:** Custom request handling ensures local development works seamlessly even behind strict corporate/university firewalls.
+* **State Management:** Uses `LangGraph` to maintain persistent conversation history across agent turns, allowing for "Time-to-Live" (TTL) checks to prevent infinite loops.
+
+## 📄 License
+
+MIT License

@@ -1,8 +1,7 @@
 import os
 from dotenv import load_dotenv
 load_dotenv()  # Load API keys from .env file
-# Updated import based on LangChain 0.3 standards
-from langchain_tavily import TavilySearchResults
+from langchain_community.tools.tavily_search import TavilySearchResults
 from langchain_core.tools import tool
 
 # Initialize Tavily
