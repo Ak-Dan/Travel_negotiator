@@ -3,7 +3,7 @@ import requests
 import json
 
 # CONFIG
-API_URL = "http://127.0.0.1:8000" # FastAPI backend URL
+API_URL = "https://travel-graph-api.onrender.com"
 
 st.set_page_config(page_title="TravelGraph Pro", page_icon="✈️", layout="centered")
 
